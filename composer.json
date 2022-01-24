@@ -26,6 +26,13 @@
         "phpunit/phpunit": ">=4.5"
     }, 
     "autoload": {
-        "files": ["restclient.php"]
+        "psr-4": {
+            "Tcdent\\PHPRestClient\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tcdent\\PHPRestClient\\Tests\\": "tests"
+        }
     }
 }

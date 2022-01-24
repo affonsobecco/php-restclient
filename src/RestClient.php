@@ -6,7 +6,10 @@
  * (c) 2013-2017 Travis Dent <tcdent@gmail.com>
  */
 
-class RestClientException extends Exception {}
+namespace Tcdent\PHPRestClient;
+
+use ArrayAccess;
+use Iterator;
 
 class RestClient implements Iterator, ArrayAccess {
     
