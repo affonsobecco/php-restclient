@@ -1,3 +1,4 @@
 /vendor
 /.devcontainer
 composer.lock
+.phpunit.cache/test-results

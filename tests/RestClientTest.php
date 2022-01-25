@@ -3,19 +3,51 @@
 namespace Tcdent\PHPRestClient\Tests;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Process\Process;
 use Tcdent\PHPRestClient\RestClient;
 
-// This varible can be overridden with a PHPUnit XML configuration file.
-if(!isset($TEST_SERVER_URL))
-    $TEST_SERVER_URL = "http://localhost:8888"; 
-
 class RestClientTest extends TestCase {
-    
+
+    protected static Process $process;
+    private static string $serverUrl = "localhost:8888";
+
+    public static function setUpBeforeClass(): void
+    {
+        // This varible can be overridden with a PHPUnit XML configuration file.
+        if(isset($TEST_SERVER_URL)) {
+            self::$serverUrl = $TEST_SERVER_URL;
+        }
+
+        $command = [
+            'php',
+            '-S',
+            self::$serverUrl,
+            realpath(__DIR__.'/server-test.php')
+        ];
+
+        self::$process = new Process($command);
+        // Disabling the output, otherwise the process might hang after too much output
+        self::$process->disableOutput();
+        // Actually execute the command and start the process
+        self::$process->start();
+
+        // self::$process->wait();
+        // Let's give the server some leeway to fully start
+        usleep(100000);
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        self::$process->stop();
+    }
+
+    /**
+     * @group group
+     */
     public function test_get(){
-        global $TEST_SERVER_URL;
         
         $api = new RestClient();
-        $result = $api->get($TEST_SERVER_URL, [
+        $result = $api->get(self::$serverUrl, [
             'foo' => ' bar', 'baz' => 1, 'bat' => ['foo', 'bar']
         ]);
         
@@ -29,10 +61,9 @@ class RestClientTest extends TestCase {
     }
     
     public function test_post(){
-        global $TEST_SERVER_URL;
         
         $api = new RestClient;
-        $result = $api->post($TEST_SERVER_URL, [
+        $result = $api->post(self::$serverUrl, [
             'foo' => ' bar', 'baz' => 1, 'bat' => ['foo', 'bar']
         ]);
         
@@ -44,10 +75,9 @@ class RestClientTest extends TestCase {
     }
     
     public function test_put(){
-        global $TEST_SERVER_URL;
         
         $api = new RestClient;
-        $result = $api->put($TEST_SERVER_URL, array(
+        $result = $api->put(self::$serverUrl, array(
             'foo' => ' bar', 'baz' => 1));
         
         $response_json = $result->decode_response();
@@ -58,10 +88,9 @@ class RestClientTest extends TestCase {
     }
     
     public function test_delete(){
-        global $TEST_SERVER_URL;
         
         $api = new RestClient;
-        $result = $api->delete($TEST_SERVER_URL, array(
+        $result = $api->delete(self::$serverUrl, array(
             'foo' => ' bar', 'baz' => 1));
         
         $response_json = $result->decode_response();
@@ -72,12 +101,11 @@ class RestClientTest extends TestCase {
     }
     
     public function test_user_agent(){
-        global $TEST_SERVER_URL;
         
         $api = new RestClient(array(
             'user_agent' => "RestClient Unit Test"
         ));
-        $result = $api->get($TEST_SERVER_URL);
+        $result = $api->get(self::$serverUrl);
         
         $response_json = $result->decode_response();
         $this->assertEquals("RestClient Unit Test", 
@@ -85,10 +113,9 @@ class RestClientTest extends TestCase {
     }
     
     public function test_json_patch(){
-        global $TEST_SERVER_URL;
         
         $api = new RestClient;
-        $result = $api->execute($TEST_SERVER_URL, 'PATCH',
+        $result = $api->execute(self::$serverUrl, 'PATCH',
             "{\"foo\":\"bar\"}",
             array(
                 'X-HTTP-Method-Override' => 'PATCH', 
@@ -109,7 +136,7 @@ class RestClientTest extends TestCase {
         global $TEST_SERVER_URL;
         
         $api = new RestClient;
-        $result = $api->post($TEST_SERVER_URL, "{\"foo\":\"bar\"}",
+        $result = $api->post(self::$serverUrl, "{\"foo\":\"bar\"}",
             array('Content-Type' => 'application/json'));
         $response_json = $result->decode_response();
         
@@ -166,10 +193,9 @@ class RestClientTest extends TestCase {
     }
     
     public function test_build_indexed_queries(){
-        global $TEST_SERVER_URL;
         
         $api = new RestClient(['build_indexed_queries' => TRUE]);
-        $result = $api->get($TEST_SERVER_URL, [
+        $result = $api->get(self::$serverUrl, [
             'foo' => ' bar', 'baz' => 1, 'bat' => ['foo', 'bar', 'baz[12]']
         ]);
         
@@ -179,10 +205,9 @@ class RestClientTest extends TestCase {
     }
     
     public function test_build_non_indexed_queries(){
-        global $TEST_SERVER_URL;
         
         $api = new RestClient;
-        $result = $api->get($TEST_SERVER_URL, [
+        $result = $api->get(self::$serverUrl, [
             'foo' => ' bar', 'baz' => 1, 'bat' => ['foo', 'bar', 'baz[12]']
         ]);
         
