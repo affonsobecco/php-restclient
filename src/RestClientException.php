@@ -10,6 +10,6 @@ namespace Tcdent\PHPRestClient;
 
 use Exception;
 
-class RestClientException extends Exception {}
-
-
+class RestClientException extends Exception
+{
+}

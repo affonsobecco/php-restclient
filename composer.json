@@ -24,7 +24,8 @@
     "require-dev": {
         "php": ">=5.5.7", 
         "phpunit/phpunit": ">=4.5",
-        "symfony/process": "^6.0"
+        "symfony/process": "^6.0",
+        "friendsofphp/php-cs-fixer": "^3.5"
     }, 
     "autoload": {
         "psr-4": {
