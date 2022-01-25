@@ -17,15 +17,23 @@
         "issues": "http://github.com/tcdent/php-restclient/issues"
     }, 
     "require": {
-        "php": ">=5.4.0", 
+        "php": "^8.0", 
         "ext-curl": "*", 
         "ext-json": "*"
     }, 
     "require-dev": {
-        "php": ">=5.5.7", 
-        "phpunit/phpunit": ">=4.5"
+        "phpunit/phpunit": ">=4.5",
+        "symfony/process": "^6.0",
+        "friendsofphp/php-cs-fixer": "^3.5"
     }, 
     "autoload": {
-        "files": ["restclient.php"]
+        "psr-4": {
+            "Tcdent\\PHPRestClient\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tcdent\\PHPRestClient\\Tests\\": "tests"
+        }
     }
 }
